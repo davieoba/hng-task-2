@@ -12,9 +12,9 @@ abstract class BaseResponseHandler {
     data?: Record<string, any>
   ) {
     const response = {
-      message: responseMessage.message,
       status: HTTP_STATUS_CODE[statusCode as keyof typeof HTTP_STATUS_CODE],
-      statusCode: responseMessage.response_code,
+      message: responseMessage.message,
+      statusCode: statusCode,
       data,
     }
 
@@ -32,7 +32,7 @@ abstract class BaseResponseHandler {
   ) {
     const response = {
       status: HTTP_STATUS_CODE[statusCode as keyof typeof HTTP_STATUS_CODE],
-      statusCode: statusCode,
+      // statusCode: statusCode,
       message: message,
       data,
     }

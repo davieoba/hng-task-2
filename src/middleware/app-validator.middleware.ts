@@ -5,6 +5,7 @@ import db from "../db"
 import { IUserSignUp } from "../extensions/types/request.type"
 import {
   badRequestError,
+  CLIENT_ERROR,
   DUPLICATE_EMAIL,
 } from "../extensions/utils/error-response-message"
 import BaseRouterMiddleware from "./base-middleware/base-router.middleware"
@@ -29,14 +30,14 @@ class AppValidator extends BaseRouterMiddleware {
       })
 
       await UserSignupSchema.validateAsync(req.body, joiValidatorOptions)
-      const existingUser = await db.query.users.findFirst({
-        where(users, { eq }) {
-          return eq(users.email, req.body.email)
+      const existingUser = await db.query.Users.findFirst({
+        where(Users, { eq }) {
+          return eq(Users.email, req.body.email)
         },
       })
       if (existingUser) {
         const error = new Error("A user with this email already exists")
-        return this.sendErrorResponse(res, error, DUPLICATE_EMAIL, 400)
+        return this.sendErrorResponse(res, error, DUPLICATE_EMAIL, 422)
       }
       next()
     } catch (error: any) {
@@ -46,6 +47,26 @@ class AppValidator extends BaseRouterMiddleware {
         badRequestError(error.message),
         400
       )
+    }
+  }
+
+  public validateOrganization = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const OrganizationCreateSchema = joi.object({
+        name: joi.string().required(),
+        description: joi.string().required(),
+      })
+      await OrganizationCreateSchema.validateAsync(
+        req.body,
+        joiValidatorOptions
+      )
+      next()
+    } catch (error: any) {
+      this.sendErrorResponse(res, new Error("Bad Request"), CLIENT_ERROR, 422)
     }
   }
 }

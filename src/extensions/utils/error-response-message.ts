@@ -42,11 +42,23 @@ const BAD_REQUEST = Object.freeze({
   message: "Bad Request",
 })
 
+const INVALID_TOKEN = Object.freeze({
+  response_code: 9,
+  message: "Invalid Token",
+})
+
+const CLIENT_ERROR = Object.freeze({
+  response_code: 10,
+  message: "Client error",
+} as const)
+
 export {
   AUTHENTICATION_FAILED,
   BAD_REQUEST,
+  CLIENT_ERROR,
   DUPLICATE_EMAIL,
   INVALID_PERMISSION,
+  INVALID_TOKEN,
   REGISTRATION_UNSUCCESSFUL,
   UNABLE_TO_COMPLETE_REQUEST,
   badRequestError,

@@ -1,6 +1,6 @@
 import APP_CONSTANTS from "../config/app.constants"
 import db from "../db"
-import { NewUserType, users } from "../db/schema/db.schema"
+import { NewUserType, Users, UserType } from "../db/schema/db.schema"
 import {
   BAD_REQUEST,
   REGISTRATION_UNSUCCESSFUL,
@@ -8,14 +8,16 @@ import {
 import SUCCESS_RESPONSE_MESSAGE from "../extensions/utils/success-response-message"
 import UserService from "../services/user.service"
 import BaseApiController from "./base-controllers/BaseApiController.controller"
+import OrganizationController from "./org.controller"
 
 class AuthController extends BaseApiController {
   // appValidator: AppValidator
-
+  organizationController: OrganizationController
   constructor() {
     super()
     // this.appValidator = new AppValidator(this.router)
     this.initializeRoutes()
+    this.organizationController = new OrganizationController()
   }
 
   protected initializeServices(): void {}
@@ -34,7 +36,7 @@ class AuthController extends BaseApiController {
     this.router.post(path, async (req, res) => {
       try {
         const body = req.body
-        const userData = {
+        const userData: Omit<NewUserType, "userId"> = {
           firstName: body.firstName,
           lastName: body.lastName,
           email: body.email,
@@ -42,7 +44,7 @@ class AuthController extends BaseApiController {
           phone: body.phone,
         }
         const user: NewUserType[] = await db
-          .insert(users)
+          .insert(Users)
           .values(userData)
           .returning()
 
@@ -55,20 +57,32 @@ class AuthController extends BaseApiController {
             400
           )
         }
-
+        // CREATE AN ORGANIZATION
+        await this.organizationController.createOrganization(
+          user[0].firstName,
+          user[0].userId as string
+        )
+        // CREATE TOKEN
         const token = await new UserService().loginUser(
           user[0].userId as string
         )
+        const newUser = user[0]
         const response = {
           accessToken: token,
-          user,
+          user: {
+            userId: newUser.userId,
+            firstName: newUser.firstName,
+            lastName: newUser.lastName,
+            email: newUser.email,
+            phone: newUser.phone,
+          },
         }
 
         return this.sendSuccessResponse(
           res,
           SUCCESS_RESPONSE_MESSAGE.SIGNUP_SUCCESSFUL,
           response,
-          200
+          201
         )
       } catch (error: any) {
         this.sendErrorResponse(res, error, REGISTRATION_UNSUCCESSFUL, 500, {})
@@ -84,13 +98,19 @@ class AuthController extends BaseApiController {
     )
     this.router.post(path, async (_req, res) => {
       try {
-        const user = this.requestUtils.getDataFromState(
+        const user: UserType = this.requestUtils.getDataFromState(
           APP_CONSTANTS.USER_LABEL
         )
         const token = await new UserService().loginUser(user.userId)
         const response = {
           accessToken: token,
-          user,
+          user: {
+            userId: user.userId,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            phone: user.phone,
+          },
         }
         return this.sendSuccessResponse(
           res,
@@ -99,7 +119,7 @@ class AuthController extends BaseApiController {
           200
         )
       } catch (error: any) {
-        this.sendErrorResponse(res, error, BAD_REQUEST, 400)
+        this.sendErrorResponse(res, error, BAD_REQUEST, 401)
       }
     })
   }

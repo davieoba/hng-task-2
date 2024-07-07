@@ -40,7 +40,7 @@ class UserMiddleware extends BaseRouterMiddleware {
       return this.sendErrorResponse(res, error, requiredField("email"), 400)
     }
 
-    const user = await db.query.users.findFirst({
+    const user = await db.query.Users.findFirst({
       where(users, { eq }) {
         return eq(users.email, email)
       },
@@ -50,7 +50,7 @@ class UserMiddleware extends BaseRouterMiddleware {
         res,
         new Error("Authentication Failed"),
         BAD_REQUEST,
-        400
+        401
       )
 
     // attach the user to the request object
@@ -77,13 +77,12 @@ class UserMiddleware extends BaseRouterMiddleware {
         req.body.password,
         userPassword
       )
-
       if (!isCorrectPassword) {
         return this.sendErrorResponse(
           res,
           new Error("Authentication Failed"),
           BAD_REQUEST,
-          400
+          401
         )
       }
       next()
@@ -92,7 +91,7 @@ class UserMiddleware extends BaseRouterMiddleware {
         res,
         new Error("Authentication Failed"),
         BAD_REQUEST,
-        400
+        401
       )
     }
   }
