@@ -44,7 +44,6 @@ const verifyJwtToken = async (token: string): Promise<IJwtPayload> => {
   try {
     decoded = (await jwt.verify(token, Env.JWT_SECRET)) as IJwtPayload
 
-    console.log({ decoded })
     // if (!decoded) {
     //   throw new Error("Invalid Token")
     // }

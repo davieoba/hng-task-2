@@ -21,6 +21,7 @@ class OrganizationController extends BaseApiController {
     this.getUserOrganizations("/") // GET ALL ORGANIZATION
     this.getAnOrganization("/:id") // GET A SINGLE ORGANIZATION
     this.userCreateAnOrganization("/") //  USER CREATE AN ORGANIZATION
+    this.addUserToOrganization("/:id/users") // ADD USER TO AN ORGANIZATION
   }
 
   async createOrganization(name: string, userId: string) {
@@ -144,24 +145,53 @@ class OrganizationController extends BaseApiController {
   async addUserToOrganization(path: string) {
     this.router.post(path)
     this.router.post(path, async (req, res) => {
-      const id = req.query.id
-      // CHECK IF THE ORGANIZATION EXISTS
-      const checkIfOrganizationExists = await db.query.Organizations.findFirst({
-        where(organizations, { eq }) {
-          return eq(organizations.orgId, String(id))
-        },
-      })
+      try {
+        const id = req.params.id
+        // CHECK IF THE ORGANIZATION EXISTS
+        const checkIfOrganizationExists =
+          await db.query.Organizations.findFirst({
+            where(organizations, { eq }) {
+              return eq(organizations.orgId, String(id))
+            },
+          })
 
-      if (!checkIfOrganizationExists) {
-        return this.sendErrorResponse(
-          res,
-          new Error("Organization does not exist"),
-          BAD_REQUEST,
-          400
+        if (!checkIfOrganizationExists) {
+          return this.sendErrorResponse(
+            res,
+            new Error("Organization does not exist"),
+            BAD_REQUEST,
+            400
+          )
+        }
+
+        // CREATE AN INSTANCE ON THE TABLE THAT MATCHES THE USERID ON THE USER_TO_ORGANIZATION TABLE
+        const user = this.requestUtils.getDataFromState(
+          APP_CONSTANTS.USER_LABEL
         )
-      }
+        const orgData = {
+          userId: user.userId,
+          organizationId: id as string,
+        }
+        const organization = await db
+          .insert(usersToOrganizations)
+          .values(orgData)
+          .returning()
+        if (!organization) {
+          return this.sendErrorResponse(
+            res,
+            new Error("Error adding user to organization"),
+            BAD_REQUEST,
+            400
+          )
+        }
 
-      // CREATE AN INSTANCE ON THE TABLE THAT MATCHES THE USERID
+        return this.sendSuccessResponse(
+          res,
+          "User added to organisation successfully"
+        )
+      } catch (error: any) {
+        this.sendErrorResponse(res, error, BAD_REQUEST, 400)
+      }
     })
   }
 }
