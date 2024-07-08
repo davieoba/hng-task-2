@@ -58,15 +58,17 @@ class AuthController extends BaseApiController {
           )
         }
         // CREATE AN ORGANIZATION
-        await this.organizationController.createOrganization(
-          user[0].firstName,
-          user[0].userId as string
-        )
+        const organization =
+          await this.organizationController.createOrganization(
+            user[0].firstName,
+            user[0].userId as string
+          )
         // CREATE TOKEN
         const token = await new UserService().loginUser(
           user[0].userId as string
         )
         const newUser = user[0]
+        const organizationName = organization[0].name
         const response = {
           accessToken: token,
           user: {
@@ -76,6 +78,7 @@ class AuthController extends BaseApiController {
             email: newUser.email,
             phone: newUser.phone,
           },
+          organizationName,
         }
 
         return this.sendSuccessResponse(

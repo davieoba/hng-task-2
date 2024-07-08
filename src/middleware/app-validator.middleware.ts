@@ -45,7 +45,7 @@ class AppValidator extends BaseRouterMiddleware {
         res,
         error,
         badRequestError(error.message),
-        400
+        422
       )
     }
   }
