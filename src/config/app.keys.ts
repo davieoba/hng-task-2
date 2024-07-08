@@ -2,7 +2,7 @@ import "dotenv/config"
 
 export interface IEnv {
   PORT: number
-  API_VERSION: string
+  API_VERSION?: string
   API_PATH: string
   ENVIRONMENT: string
   ALLOWED_ORIGINS: string[]
@@ -17,8 +17,8 @@ export interface IEnv {
 
 const Env: IEnv = {
   PORT: Number(process.env.PORT),
-  API_PATH: "/api/" + process.env.API_VERSION,
-  API_VERSION: process.env.API_VERSION as string,
+  API_PATH: "/api",
+  // API_VERSION: process.env.API_VERSION as string,
   ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS?.split(", ") as string[],
   ENVIRONMENT: process.env.ENVIRONMENT as string,
   POSTGRES_DB: process.env.POSTGRES_DB as string,

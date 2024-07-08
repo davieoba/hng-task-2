@@ -31,7 +31,7 @@ class App {
       res.status(200).send(response)
     })
 
-    this.app.use(Env.API_PATH, new AuthController().router)
+    this.app.use("/auth", new AuthController().router)
 
     //  Load Authentication MiddleWare
     this.app.use(Env.API_PATH, this.authMiddleware.authGuard)

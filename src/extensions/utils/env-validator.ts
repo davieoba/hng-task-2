@@ -11,7 +11,7 @@ function validateEnvironmentVariables() {
         .required(),
       PORT: joi.number().required(),
       ALLOWED_ORIGINS: joi.array().items(joi.string()).min(1).required(),
-      API_VERSION: joi.string().required(),
+      API_VERSION: joi.string(),
       API_PATH: joi.string().required(),
       POSTGRES_DB: joi.string().required(),
       POSTGRES_HOST: joi.string().required(),
