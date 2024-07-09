@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
-    "start": "cross-env NODE_ENV=production npublic/index.js",
+    "start": "cross-env NODE_ENV=production node public/index.js",
     "build": "npx tsc",
     "introspect": "drizzle-kit introspect:pg --config=drizzle.config.ts",
     "generate": "drizzle-kit generate --config=drizzle.config.ts",

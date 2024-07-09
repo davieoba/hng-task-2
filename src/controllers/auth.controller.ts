@@ -6,6 +6,7 @@ import {
   REGISTRATION_UNSUCCESSFUL,
 } from "../extensions/utils/error-response-message"
 import SUCCESS_RESPONSE_MESSAGE from "../extensions/utils/success-response-message"
+import OrganizationService from "../services/organization.service"
 import UserService from "../services/user.service"
 import BaseApiController from "./base-controllers/BaseApiController.controller"
 import OrganizationController from "./org.controller"
@@ -13,11 +14,13 @@ import OrganizationController from "./org.controller"
 class AuthController extends BaseApiController {
   // appValidator: AppValidator
   organizationController: OrganizationController
+  organizationService: OrganizationService
   constructor() {
     super()
     // this.appValidator = new AppValidator(this.router)
     this.initializeRoutes()
     this.organizationController = new OrganizationController()
+    this.organizationService = new OrganizationService()
   }
 
   protected initializeServices(): void {}
@@ -58,11 +61,11 @@ class AuthController extends BaseApiController {
           )
         }
         // CREATE AN ORGANIZATION
-        const organization =
-          await this.organizationController.createOrganization(
-            user[0].firstName,
-            user[0].userId as string
-          )
+
+        const organization = await this.organizationService.createOrganization(
+          user[0].firstName,
+          user[0].userId as string
+        )
         // CREATE TOKEN
         const token = await new UserService().loginUser(
           user[0].userId as string

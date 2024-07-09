@@ -17,7 +17,7 @@ class AppRoutes {
   initializeRoutes() {
     this.app.use(Env.API_PATH + "/users", this.userController.router)
     this.app.use(
-      Env.API_PATH + "/organizations",
+      Env.API_PATH + "/organisations",
       this.organizationController.router
     )
   }

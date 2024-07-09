@@ -2,7 +2,6 @@ import { eq } from "drizzle-orm"
 import APP_CONSTANTS from "../config/app.constants"
 import db from "../db"
 import {
-  NewOrgType,
   NewUserToOrganization,
   Organizations,
   usersToOrganizations,
@@ -24,29 +23,25 @@ class OrganizationController extends BaseApiController {
     this.addUserToOrganization("/:id/users") // ADD USER TO AN ORGANIZATION
   }
 
-  async createOrganization(name: string, userId: string) {
-    const orgData: Omit<NewOrgType, "orgId" | "description"> = {
-      name: `${name}'s organization`,
-      userId: userId,
-    }
-    const organization: NewOrgType[] = await db
-      .insert(Organizations)
-      .values(orgData)
-      .returning()
+  // async createOrganization(name: string, userId: string) {
+  //   const orgData: Omit<NewOrgType, "orgId" | "description"> = {
+  //     name: `${name}'s organization`,
+  //     userId: userId,
+  //   }
+  //   const organization: NewOrgType[] = await db
+  //     .insert(Organizations)
+  //     .values(orgData)
+  //     .returning()
 
-    const usersToOrgData: NewUserToOrganization = {
-      organizationId: organization[0].orgId as string,
-      userId: userId,
-    }
+  //   const usersToOrgData: NewUserToOrganization = {
+  //     organizationId: organization[0].orgId as string,
+  //     userId: userId,
+  //   }
 
-    await db.insert(usersToOrganizations).values(usersToOrgData).returning()
+  //   await db.insert(usersToOrganizations).values(usersToOrgData).returning()
 
-    return organization
-    // if (!organization) {
-    //   const error = new Error("Unable to create Organization")
-    //   throw error
-    // }
-  }
+  //   return organization
+  // }
 
   // GET ALL THE ORGANIZATION THAT THIS USER BELONGS TO
   async getUserOrganizations(path: string) {
