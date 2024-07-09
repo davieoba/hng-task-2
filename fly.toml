@@ -1,0 +1,35 @@
+# fly.toml app configuration file generated for task-2 on 2024-07-08T15:52:16+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'task-2'
+primary_region = 'ams'
+
+[build]
+
+[env]
+  PORT = "3000"
+  POSTGRES_URL="postgres://default:a0LETFpd6wBY@ep-little-forest-a4t047xh-pooler.us-east-1.aws.neon.tech:5432/verceldb"
+  POSTGRES_HOST="ep-little-forest-a4t047xh-pooler.us-east-1.aws.neon.tech"
+  POSTGRES_PASSWORD="a0LETFpd6wBY"
+  POSTGRES_DB="verceldb"
+  POSTGRES_USER="default"
+  JWT_SECRET = "hidden-leaf"
+  JWT_EXPIRY = "1h"
+  ENVIRONMENT = "development"
+  ALLOWED_ORIGINS = "http://localhost:3000, *"
+
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

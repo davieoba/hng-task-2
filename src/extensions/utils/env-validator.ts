@@ -22,12 +22,13 @@ function validateEnvironmentVariables() {
       JWT_SECRET: joi.string().required(),
     })
     const response = EnvSchema.validate(Env)
-    if (response.error)
+    if (response.error) {
       throw new Error(
         `Env validation error: ${response.error.details
           .map((x) => x.message)
           .join(", ")}`
       )
+    }
   } catch (error) {
     throw error
   }

@@ -6,6 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    depends_on:
+      - postgres
 
   postgres:
     container_name: postgres
@@ -26,6 +28,8 @@ services:
     ports:
       - "8080:8080"
     restart: always
+    depends_on:
+      - postgres
 
   # pgadmin:
   #   container_name: pgadmin

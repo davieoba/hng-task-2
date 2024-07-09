@@ -13,12 +13,13 @@ if (
 }
 
 const pool = new Pool({
-  port: 5432,
-  host: Env.POSTGRES_HOST,
-  user: Env.POSTGRES_USER,
-  password: Env.POSTGRES_PASSWORD,
-  database: Env.POSTGRES_DB,
-  connectionString: Env.POSTGRES_URL,
+  // port: 5432,
+  // host: Env.POSTGRES_HOST,
+  // user: Env.POSTGRES_USER,
+  // password: Env.POSTGRES_PASSWORD,
+  // database: Env.POSTGRES_DB,
+  connectionString: Env.POSTGRES_URL + "?sslmode=require",
+  // connectionString: Env.POSTGRES_URL,
 })
 
 const db: NodePgDatabase<typeof schema> = drizzle(pool, { schema })
